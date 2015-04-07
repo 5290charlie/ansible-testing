@@ -1,0 +1,4 @@
+- hosts: tag_aws_autoscaling_groupName_"{{ app_name }}"
+  sudo: yes
+  roles:
+  - common

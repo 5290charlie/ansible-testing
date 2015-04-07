@@ -1,0 +1,33 @@
+---
+# Defaults File
+
+configure_aide: yes
+action_mail_acct: "root"
+admin_space_left_action: "halt"
+max_log_file: 100
+max_log_file_action: "keep_logs"
+space_left_action: "email"
+
+rsyslog_host: no
+
+dns: no
+dovecot: no
+ftp: no
+ldap_client: no
+ldap_server: no
+nfs: yes
+samba: np
+snmp: yes
+squid: no
+
+lock_inactive: no
+
+enable_iptables: no
+
+enable_ip6table: no
+
+disable_ipv6: no
+
+verify_find: no
+
+verify_rpm: no

@@ -1,0 +1,11 @@
+---
+# Handlers File
+
+  - name: Reload auditd Rules
+    command: /usr/bin/pkill -HUP -P 1 auditd
+
+  - name: Reload sshd
+    shell: /etc/init.d/sshd reload
+    register: result
+    changed_when: "result.rc == 0"
+    failed_when: "result.rc not in [0, 7]"

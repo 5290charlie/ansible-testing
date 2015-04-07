@@ -1,0 +1,1096 @@
+---
+# Tasks File
+  - name: Install AIDE
+    command: >
+      /usr/sbin/aide --init -B 'database_out=file:/var/lib/aide/aide.db.gz'
+      creates=/var/lib/aide/aide.db.gz
+    when: configure_aide
+    tags:
+      - aide
+
+  - name: Implement Periodic Execution of File Integrity
+    cron: >
+      name="Run AIDE"
+      minute="0"
+      hour="5"
+      job="/usr/sbin/aide --check"
+    when: configure_aide
+    tags:
+      - aide
+
+  - name: Disable SElinux state
+    yum: >
+      name=selinux-policy-targeted
+      state=present
+    tags:
+      - selinux
+
+  - name: Disable SElinux Policy
+    selinux: >
+      state=disabled
+      policy=targeted
+    ignore_errors: yes
+    tags:
+      - selinux
+
+  - name: Remove telnet-server
+    yum: >
+      name=telnet-server
+      state=absent
+    tags:
+      - telnet server
+
+  - name: Remove telnet Clients
+    yum: >
+      name=telnet
+      state=absent
+    tags:
+      - telnet client
+
+  - name: Remove rsh-server
+    yum: >
+      name=rsh-server
+      state=absent
+    tags:
+      - rsh server
+
+  - name: Remove rsh
+    yum: >
+      name=rsh
+      state=absent
+    tags:
+      - rsh
+
+  - name: Remove NIS Client
+    yum: >
+      name=ypbind
+      state=absent
+    tags:
+      - ypbind
+
+  - name: Remove NIS Server
+    yum: >
+      name=ypserv
+      state=absent
+    tags:
+      - NIS server
+
+  - name: Remove tftp
+    yum: >
+      name=tftp
+      state=absent
+    tags:
+      - tftp
+
+  - name: Remove tftp-server
+    yum: >
+      name=tftp-server
+      state=absent
+    tags:
+      - tftp server
+
+  - name: Remove talk
+    yum: >
+      name=talk
+      state=absent
+    tags:
+      - talk
+
+  - name: Remove talk-server
+    yum: >
+      name=talk-server
+      state=absent
+    tags:
+      - talk server
+
+  - name: Disable chargen-dgram (check if exists)
+    stat: path=/etc/xinetd.d/chargen-dgram
+    register: chargen_dgram
+    tags:
+      - chargen dgram
+
+  - name: Disable chargen-dgram (disable xinetd service)
+    service: >
+        name=chargen-dgram
+        state=stopped
+        enabled=no
+    when: chargen_dgram.stat.exists
+    tags:
+      - chargen dgram
+
+  - name: Disable chargen-stream (check if exists)
+    stat: path=/etc/xinetd.d/chargen-stream
+    register: chargen_stream
+    tags:
+      - chargen stream
+
+  - name: Disable chargen-stream (disable xinetd service)
+    service: >
+        name=chargen-stream
+        state=stopped
+        enabled=no
+    when: chargen_stream.stat.exists
+    tags:
+      - chargen stream
+
+  - name: Disable daytime-dgram (check if exists)
+    stat: path=/etc/xinetd.d/daytime-dgram
+    register: daytime_dgram
+    tags:
+      - daytime dgram
+
+  - name: Disable daytime-dgram (disable xinetd service)
+    service: >
+        name=daytime-dgram
+        state=stopped
+        enabled=no
+    when: daytime_dgram.stat.exists
+    tags:
+      - daytime dgram
+
+  - name: Disable daytime-stream (check if exists)
+    stat: path=/etc/xinetd.d/daytime-stream
+    register: daytime_stream
+    tags:
+      - daytime stream
+
+  - name: Disable daytime-stream (disable xinetd service)
+    service: >
+        name=daytime-stream
+        state=stopped
+        enabled=no
+    when: daytime_stream.stat.exists
+    tags:
+      - xinetd
+
+  - name: Disable echo-dgram (check if exists)
+    stat: path=/etc/xinetd.d/echo-dgram
+    register: echo_dgram
+    tags:
+      - echo dgram
+
+  - name: 2.1.16 Disable echo-dgram (disable xinetd service)
+    service: >
+        name=echo-dgram
+        state=stopped
+        enabled=no
+    when: echo_dgram.stat.exists
+    tags:
+      - xinted
+
+  - name: Disable echo-stream (check if exists)
+    stat: path=/etc/xinetd.d/echo-stream
+    register: echo_stream
+    tags:
+      - scored
+      - section2.1
+      - section2.1.17
+
+  - name: Disable echo-stream (disable xinetd service)
+    service: >
+        name=echo-stream
+        state=stopped
+        enabled=no
+    when: echo_stream.stat.exists
+    tags:
+      - echo stream
+
+  - name: Disable tcpmux-server (check if exists)
+    stat: path=/etc/xinetd.d/tcpmux-server
+    register: tcpmux_server
+    tags:
+      - tcpmux server
+
+  - name: Disable tcpmux-server (disable xinetd service)
+    service: >
+        name=tcpmux-server
+        state=stopped
+        enabled=no
+    when: tcpmux_server.stat.exists
+    tags:
+      - tcmux server
+
+
+  - name: Remove xinetd (Scored)
+    yum: >
+      name=xinetd
+      state=absent
+    tags:
+      - xinted
+
+  - name: 3.1 Set Daemon umask (Scored)
+    lineinfile: >
+      dest=/etc/sysconfig/init
+      state=present
+      regexp=^umask
+      line="umask 027"
+    tags:
+      - scored
+      - section3.1
+
+  - name: 3.2 Remove X Windows (runlevel 3) (Scored)
+    lineinfile: >
+      dest=/etc/inittab
+      state=present
+      regexp="^id:"
+      line="id:3:initdefault:"
+    tags:
+      - scored
+      - section3.2
+
+  - name: 3.2 Remove X Windows (remove package group) (Scored)
+    yum: >
+      name=xorg-x11-server-common
+      state=absent
+    tags:
+      - scored
+      - section3.2
+
+  - name: 3.3 Disable Avahi Server (check if installed) (Scored)
+    stat: path=/etc/init.d/avahi-daemon
+    register: avahi_service
+    tags:
+      - scored
+      - section3.3
+
+  - name: 3.3 Disable Avahi Server (disable service) (Scored)
+    service: >
+      name=avahi-daemon
+      state=stopped
+      enabled=no
+    when: avahi_service.stat.exists
+    tags:
+      - scored
+      - section3.3
+
+  - name: 3.4 Check to see if cups daemon is installed (Not Scored)
+    stat: path=/etc/init.d/cups
+    register: cups_service
+    tags:
+      - notscored
+      - section3.4
+
+  - name: 3.4 Disable Print Server - CUPS (Not Scored)
+    service: >
+      name=cups
+      state=stopped
+      enabled=no
+    ignore_errors: yes
+    when: cups_service.stat.exists
+    tags:
+      - notscored
+      - section3.4
+
+  - name: 3.5 Remove DHCP Server (Scored)
+    yum: >
+      name=dhcp
+      state=absent
+    tags:
+      - scored
+      - section3.5
+
+  - name: 3.6 Configure Network Time Protocol (ipv4) (Scored)
+    yum: >
+      pkg=ntp
+      state=installed
+    always_run: yes
+    tags:
+      - scored
+      - section3.6
+
+  - name: 3.6 Configure Network Time Protocol (ipv4) (Scored)
+    service: >
+      name=ntpd
+      state=started
+      enabled=yes
+    tags:
+      - scored
+      - section3.6
+
+  - name: 3.6 Configure Network Time Protocol (ipv4) (Scored)
+    lineinfile: >
+      dest=/etc/ntp.conf
+      state=present
+      regexp="^restrict default"
+      line="restrict default kod nomodify notrap nopeer noquery"
+      insertafter=EOF
+    tags:
+      - scored
+      - section3.6
+
+  - name: 3.6 Configure Network Time Protocol (ipv6) (Scored)
+    lineinfile: >
+      dest=/etc/ntp.conf
+      state=present
+      regexp="^restrict -6 default"
+      line="restrict -6 default kod nomodify notrap nopeer noquery"
+      insertafter=EOF
+    tags:
+      - scored
+      - section3.6
+
+  - name: 3.7 Remove LDAP (Not Scored)
+    yum: >
+      name=openldap-clients
+      state=absent
+    when: not ldap_client
+    tags:
+      - notscored
+      - section3.7
+
+  - name: 3.7 Remove LDAP (Not Scored)
+    yum: >
+      name=openldap-servers
+      state=absent
+    when: not ldap_server
+    tags:
+      - notscored
+      - section3.7
+
+  - name: 3.8 Disable NFS and RPC (check for nfs-utils) (Not Scored)
+    stat: path=/etc/init.d/nfslock
+    register: nfs_utils
+    tags:
+      - notscored
+      - section3.8
+
+  - name: 3.8 Disable NFS and RPC (check for rpcbind) (Not Scored)
+    stat: path=/etc/init.d/rpcbind
+    register: rpcbind
+    tags:
+      - notscored
+      - section3.8
+
+  - name: 3.8 Disable NFS and RPC (nfs-utils services) (Not Scored)
+    service: >
+      name={{ item }}
+      state=stopped
+      enabled=no
+    with_items:
+      - nfslock
+      - rpcgssd
+      - rpcidmapd
+      - rpcsvcgssd
+    when: nfs_utils.stat.exists
+    tags:
+      - notscored
+      - section3.8
+
+  - name: 3.8 Disable NFS and RPC (rpcbind services) (Not Scored)
+    service: >
+      name=rpcbind
+      state=stopped
+      enabled=no
+    when:
+      - rpcbind.stat.exists
+      - not nfs
+    tags:
+      - notscored
+      - section3.8
+
+  - name: 3.9 Remove DNS Server (Not Scored)
+    yum: >
+      name=bind
+      state=absent
+    when: not dns
+    tags:
+      - notscored
+      - section3.9
+
+  - name: 3.10 Remove FTP Server (Not Scored)
+    yum: >
+      name=vsftpd
+      state=absent
+    when: not ftp
+    tags:
+      - notscored
+      - section3.10
+
+  - name: Remove Dovecot (IMAP and POP3 services)
+    yum: >
+      name=dovecot
+      state=absent
+    when: not dovecot
+    tags:
+      - dovecott
+
+  - name: Remove Samba
+    yum: >
+      name=samba
+      state=absent
+    when: not samba
+    tags:
+      - samba
+
+  - name: 3.14 Remove HTTP Proxy Server
+    yum: >
+      name=squid
+      state=absent
+    when: not squid
+    tags:
+      - squid
+
+  - name: Remove SNMP Server
+    yum: >
+      name=net-snmp
+      state=absent
+    when: not snmp
+    tags:
+      - snmp
+
+  - name: Configure Mail Transfer Agent for Local-Only Mode
+    yum: >
+      name=postfix
+      state=present
+    tags:
+      - postfix
+
+  - name: Configure Mail Transfer Agent for Local-Only Mode
+    lineinfile: >
+      backup=yes
+      state=present
+      dest=/etc/postfix/main.cf
+      backrefs=yes
+      regexp="^inet_interfaces"
+      line="inet_interfaces = localhost"
+    ignore_errors: yes
+    tags:
+      - postfix
+
+  - name: Disable IP Forwarding
+    sysctl: >
+      name=net.ipv4.ip_forward
+      value=0
+      state=present
+    tags:
+      - ipv4 forward
+
+  - name: Disable Send Packet Redirects
+    sysctl: >
+      name=net.ipv4.conf.all.send_redirects
+      value=0
+      state=present
+      ignoreerrors=true
+    tags:
+      - send packet redirects
+
+  - name: Disable Send Packet Redirects
+    sysctl: >
+      name=net.ipv4.conf.default.send_redirects
+      value=0
+      state=present
+      ignoreerrors=true
+    tags:
+      - send packet redirects
+
+  - name: Disable Source Routed Packet Acceptance
+    sysctl: >
+      name=net.ipv4.conf.all.accept_source_route
+      value=0
+      state=present
+      ignoreerrors=true
+    tags:
+      - source routed packets
+
+  - name: Disable Source Routed Packet Acceptance
+    sysctl: >
+      name=net.ipv4.conf.default.accept_source_route
+      value=0
+      state=present
+      ignoreerrors=true
+    tags:
+      - source routed packets
+
+  - name: Disable ICMP Redirect Acceptance
+    sysctl: >
+      name=net.ipv4.conf.all.accept_redirects
+      value=0
+      state=present
+      ignoreerrors=true
+    tags:
+      - icmp redirect acceptance
+
+  - name: Disable ICMP Redirect Acceptance
+    sysctl: >
+      name=net.ipv4.conf.default.accept_redirects
+      value=0
+      state=present
+      ignoreerrors=true
+    tags:
+      - icmp redirect acceptance
+
+  - name: Log Suspicious Packets
+    sysctl: >
+      name=net.ipv4.conf.all.log_martians
+      value=1
+      state=present
+      ignoreerrors=true
+    tags:
+      - log suspicious packets
+
+  - name: Log Suspicious Packets
+    sysctl: >
+      name=net.ipv4.conf.default.log_martians
+      value=1
+      state=present
+      ignoreerrors=true
+    tags:
+      - log suspicious packets
+
+  - name: Enable Ignore Broadcast Requests
+    sysctl: >
+      name=net.ipv4.icmp_echo_ignore_broadcasts
+      value=1
+      state=present
+      ignoreerrors=true
+    tags:
+      - ignore broadcast requests
+
+  - name: Enable Bad Error Message Protection
+    sysctl: >
+      name=net.ipv4.icmp_ignore_bogus_error_responses
+      value=1
+      state=present
+      ignoreerrors=true
+    tags:
+      - bad error message protection
+
+  - name: Enable TCP SYN Cookies
+    sysctl: >
+      name=net.ipv4.tcp_syncookies
+      value=1
+      state=present
+      ignoreerrors=true
+    tags:
+      - tcp syn cookies
+
+  - name: Disable IPv6 Router Advertisements
+    sysctl: >
+      name=net.ipv6.conf.all.accept_ra
+      value=0
+      state=present
+      ignoreerrors=true
+    tags:
+      - ipv6 router advertisements
+
+  - name: Disable IPv6 Router Advertisements
+    sysctl: >
+      name=net.ipv6.conf.default.accept_ra
+      value=0
+      state=present
+      ignoreerrors=true
+    tags:
+      - ipv6 router adevertisements
+
+  - name: Disable IPv6 Redirect Acceptance
+    sysctl: >
+      name=net.ipv6.conf.all.accept_redirects
+      value=0
+      state=present
+      ignoreerrors=true
+    tags:
+      - ipv6 redirect acceptance
+
+  - name: Disable IPv6 Redirect Acceptance
+    sysctl: >
+      name=net.ipv6.conf.default.accept_redirects
+      value=0
+      state=present
+      ignoreerrors=true
+    tags:
+      - ipv6 redirect acceptance
+
+  - name: Disable IPv6 (disable in network config)
+    lineinfile: >
+      state=present
+      dest=/etc/sysconfig/network
+      regexp=^NETWORKING_IPV6
+      line=NETWORKING_IPV6=no
+    when: disable_ipv6
+    tags:
+      - disable ipv6
+
+  - name: Disable IPv6 (disable in network config)
+    lineinfile: >
+      state=present
+      dest=/etc/sysconfig/network
+      regexp=^IPV6INIT
+      line=IPV6INIT=no
+    when: disable_ipv6
+    tags:
+      - disable ipv6
+
+  - name: Disable IPv6 (disable via modprobe)
+    lineinfile: >
+      state=present
+      create=yes
+      dest=/etc/modprobe.d/ipv6.conf
+      line="options ipv6 disable=1"
+    when: disable_ipv6
+    tags:
+      - disable ipv6 modprobe
+
+  - name: Disable IPv6 (disable ip6tables)
+    service: >
+      name=ip6tables
+      enabled=no
+      state=stopped
+    when: disable_ipv6
+    tags:
+      - disable ipv6 iptables
+
+  - name: Disable IPv6 (flush routes)
+    command: /sbin/sysctl -w net.ipv6.route.flush=1
+    ignore_errors: yes
+    when: disable_ipv6
+    tags:
+      - disable ipv6 flush routes
+
+  - name: Install TCP Wrappers (Not Scored)
+    yum: >
+      name=tcp_wrappers
+      state=present
+    tags:
+      - notscored
+      - section4.5
+      - section4.5.1
+
+  - name: Create /etc/hosts.allow
+    lineinfile: >
+      state=present
+      create=yes
+      dest=/etc/hosts.allow
+      regexp=^ALL
+      line=ALL:{{ tcp_allow | default("ALL") }}
+    tags:
+      - hosts.allow
+
+  - name: Verify Permissions on /etc/hosts.allow
+    file: >
+      path=/etc/hosts.allow
+      mode=0644
+    tags:
+      - hosts.allow
+
+  - name: Create /etc/hosts.deny
+    lineinfile: >
+      state=present
+      create=yes
+      dest=/etc/hosts.deny
+      line=ALL:ALL
+    tags:
+      - hosts.deny
+
+  - name: Verify Permissions on /etc/hosts.deny
+    file: >
+      path=/etc/hosts.deny
+      mode=0644
+    tags:
+      - hosts.deny
+
+  - name: Disable Secure ICMP Redirect Acceptance
+    sysctl: >
+      name=net.ipv4.conf.all.secure_redirects
+      value=0
+      state=present
+      ignoreerrors=true
+    tags:
+      - icmp redirect acceptance
+
+  - name: Disable Secure ICMP Redirect Acceptance
+    sysctl: >
+      name=net.ipv4.conf.default.secure_redirects
+      value=0
+      state=present
+      ignoreerrors=true
+    tags:
+      - icmp redirect acceptance
+
+  - name: Enable RFC-recommended Source Route Validation
+    sysctl: >
+      name=net.ipv4.conf.all.rp_filter
+      value=1
+      state=present
+      ignoreerrors=true
+    tags:
+      - source route validation
+
+  - name: Enable RFC-recommended Source Route Validation
+    sysctl: >
+      name=net.ipv4.conf.default.rp_filter
+      value=1
+      state=present
+      ignoreerrors=true
+    tags:
+      - source route validation
+
+  - name: Configure Data Retention
+    lineinfile: >
+      state=present
+      dest=/etc/audit/auditd.conf
+      regexp="^max_log_file ="
+      line="max_log_file = {{ max_log_file }}"
+    notify: Reload auditd Rules
+    tags:
+      - auditd data retention
+
+  - name: Disable System on Audit Log Full
+    lineinfile: >
+      state=present
+      dest=/etc/audit/auditd.conf
+      regexp="^space_left_action ="
+      line="space_left_action = {{ space_left_action }}"
+    notify: Reload auditd Rules
+    tags:
+      - system audit log
+
+  - name: Disable System on Audit Log Full
+    lineinfile: >
+      state=present
+      dest=/etc/audit/auditd.conf
+      regexp="^action_mail_acct ="
+      line="action_mail_acct = {{ action_mail_acct }}"
+    notify: Reload auditd Rules
+    tags:
+      - disable on full audit logs
+
+  - name: Disable System on Audit Log Full
+    lineinfile: >
+      state=present
+      dest=/etc/audit/auditd.conf
+      regexp="^admin_space_left_action ="
+      line="admin_space_left_action = {{ admin_space_left_action }}"
+    notify: Reload auditd Rules
+    tags:
+      - disable on full audit logs
+
+  - name: Keep All Auditing Information
+    lineinfile: >
+      state=present
+      dest=/etc/audit/auditd.conf
+      regexp="^max_log_file_action ="
+      line="max_log_file_action = {{ max_log_file_action }}"
+    notify: Reload auditd Rules
+    tags:
+      - max audit log files
+
+  - name: Enable auditd Service
+    service: >
+      name=auditd
+      enabled=yes
+      state=running
+    tags:
+      - enable auditd
+
+  - name: Enable Auditing for Processes That Start Prior to auditd
+    lineinfile: >
+      state=present
+      dest=/etc/grub.conf
+      backrefs=yes
+      regexp="(^\s*kernel.*)$(?<!audit=1)"
+      line="\1 audit=1"
+    tags:
+      - audit procs before auditd starts
+
+  - name: Configure auditd Rules
+    template: src=audit/audit.rules dest=/etc/audit/audit.rules
+    notify: Reload auditd Rules
+    tags:
+      - auditd rules reload
+
+  - name: Set SSH Protocol to 2
+    lineinfile: >
+      dest=/etc/ssh/sshd_config
+      regexp="^Protocol " line="Protocol 2"
+    notify: Reload sshd
+    tags:
+      - SSHv2
+
+  - name: Set LogLevel to INFO
+    lineinfile: >
+      dest=/etc/ssh/sshd_config
+      regexp="^LogLevel "
+      line="LogLevel INFO"
+    notify: Reload sshd
+    tags:
+      - loglevel info SSHD
+
+  - name: Set Permissions on /etc/ssh/sshd_config
+    file: >
+      path=/etc/ssh/sshd_config
+      owner=root
+      group=root
+      mode=0600
+    notify: Reload sshd
+    tags:
+      - sshd_config perms
+
+  - name: Disable SSH X11 Forwarding
+    lineinfile: >
+      dest=/etc/ssh/sshd_config
+      regexp="^X11Forwarding "
+      line="X11Forwarding no"
+    notify: Reload sshd
+    tags:
+      - disable X11 forwarding
+
+  - name: Set SSH MaxAuthTries to 5 or Less
+    lineinfile: >
+      dest=/etc/ssh/sshd_config
+      regexp="^MaxAuthTries "
+      line="MaxAuthTries 5"
+    notify: Reload sshd
+    tags:
+      - sshd max tries 5
+
+  - name: Set SSH IgnoreRhosts to Yes
+    lineinfile: >
+      dest=/etc/ssh/sshd_config
+      regexp="^IgnoreRhosts "
+      line="IgnoreRhosts yes"
+    notify: Reload sshd
+    tags:
+      - ignore rhosts
+
+  - name: Set SSH HostbasedAuthentication to No
+    lineinfile: >
+      dest=/etc/ssh/sshd_config
+      regexp="^HostbasedAuthentication "
+      line="HostbasedAuthentication no"
+    notify: Reload sshd
+    tags:
+      - disable host base auth
+
+  - name: Disable SSH Root Login
+    lineinfile: >
+      dest=/etc/ssh/sshd_config
+      regexp="^PermitRootLogin "
+      line="PermitRootLogin no"
+    notify: Reload sshd
+    tags:
+      - disable root ssh
+
+  - name: Set SSH PermitEmptyPasswords to No
+    lineinfile: >
+      dest=/etc/ssh/sshd_config
+      regexp="^PermitEmptyPasswords "
+      line="PermitEmptyPasswords no"
+    notify: Reload sshd
+    tags:
+      - disable empty passwords
+
+  - name: Do Not Allow Users to Set Environment Options
+    lineinfile: >
+      dest=/etc/ssh/sshd_config
+      regexp="^PermitUserEnvironment "
+      line="PermitUserEnvironment no"
+    notify: Reload sshd
+    tags:
+      - disable user env
+
+  - name: Use Only Approved Cipher in Counter Mode
+    lineinfile: >
+      dest=/etc/ssh/sshd_config
+      regexp="^Ciphers "
+      line="Ciphers aes128-ctr,aes192-ctr,aes256-ctr"
+    notify: Reload sshd
+    tags:
+      - secure SSH ciphers
+
+  - name: Set Idle Timeout Interval for User Login
+    lineinfile: >
+      dest=/etc/ssh/sshd_config
+      regexp="^ClientAliveInterval "
+      line="ClientAliveInterval 300"
+    notify: Reload sshd
+    tags:
+      - idle timeout
+
+  - name: Set Idle Timeout Interval for User Login
+    lineinfile: >
+      dest=/etc/ssh/sshd_config
+      regexp="^ClientAliveCountMax "
+      line="ClientAliveCountMax 0"
+    notify: Reload sshd
+    tags:
+      - idle timeout interval
+
+  - name: Limit Access via SSH
+    lineinfile: >
+      dest=/etc/ssh/sshd_config
+      regexp="^AllowGroups "
+      line="AllowGroups {{ ssh_allow_groups }}"
+    when: ssh_allow_groups is defined
+    notify: Reload sshd
+    tags:
+      - SSH Groups Access
+
+  - name: Limit Access via SSH
+    lineinfile: >
+      dest=/etc/ssh/sshd_config
+      regexp="^AllowUsers "
+      line="AllowUsers {{ ssh_allow_users }}"
+    when: ssh_allow_users is defined
+    notify: Reload sshd
+    tags:
+      - SSH Users Access
+
+  - name: Limit Access via SSH
+    lineinfile: >
+      dest=/etc/ssh/sshd_config
+      regexp="^DenyGroups "
+      line="DenyGroups {{ ssh_deny_groups }}"
+    when: ssh_deny_groups is defined
+    notify: Reload sshd
+    tags:
+      - SSH Deny Groups
+
+  - name: Limit Access via SSH
+    lineinfile: >
+      dest=/etc/ssh/sshd_config
+      regexp="^DenyUsers "
+      line="DenyUsers {{ ssh_deny_users }}"
+    when: ssh_deny_users is defined
+    notify: Reload sshd
+    tags:
+      - SSH Deny Users
+
+  - name: Set SSH Banner
+    lineinfile: >
+      dest=/etc/ssh/sshd_config
+      regexp="^Banner "
+      line="Banner /etc/issue.net"
+    notify: Reload sshd
+    tags:
+      - issue.net banner
+
+  - name: Set Password Expiration Days
+    lineinfile: >
+      backup=yes
+      state=present
+      dest=/etc/login.defs
+      backrefs=yes
+      regexp="^PASS_MAX_DAYS\s+"
+      line="PASS_MAX_DAYS\t90"
+    tags:
+      - pass expiration 90 days
+
+  - name: Set Password Change Minimum Number of Days
+    lineinfile: >
+      backup=yes
+      state=present
+      dest=/etc/login.defs
+      backrefs=yes
+      regexp="^PASS_MIN_DAYS\s+"
+      line="PASS_MIN_DAYS\t7"
+    tags:
+      - Pass min days 7
+
+  - name: Set Password Expiring Warning Days
+    lineinfile: >
+      backup=yes
+      state=present
+      dest=/etc/login.defs
+      backrefs=yes
+      regexp="^PASS_WARN_AGE\s+"
+      line="PASS_WARN_AGE\t7"
+    tags:
+      - Pass expire warning days 7
+
+  - name: Disable System Accounts
+    shell: awk -F':' '($3<500 && $1!="root" && $1!="sync" && $1!="shutdown" && $1!="sync" && $1!="shutdown" && $1!="halt" && $7!="/sbin/nologin") { print $1 }' /etc/passwd
+    register: enabled_system_accounts
+    changed_when: false
+    tags:
+      - disable system accounts
+
+  - name: Disable System Accounts
+    command: /usr/sbin/usermod -s /sbin/nologin {{ item }}
+    with_items: enabled_system_accounts.stdout_lines
+    tags:
+      - disable system accounts
+
+  - name: Set Default Group for root Account
+    user: >
+      name=root
+      group=root
+    tags:
+      - Default root group
+
+  - name: 8.1 Set Warning Banner for Standard Login Services (Scored)
+    stat: path=/etc/{{ item }}
+    register: stats
+    with_items:
+      - motd
+      - issue
+      - issue.net
+    tags:
+      - scored
+      - section8.1
+
+  - name: Set Warning Banner for Standard Login Services
+    file: >
+      name=/etc/motd
+      state=absent
+    changed_when: false
+    with_items:
+      - stats.results
+    when: item.islnk is defined
+    tags:
+      - motd
+
+  - name: Set Warning Banner for Standard Login Services
+    file: >
+      name=/etc/issue
+      state=absent
+    changed_when: false
+    with_items:
+      - stats.results
+    when: item.islnk is defined
+    tags:
+      - issue
+
+  - name: Set Warning Banner for Standard Login Services
+    file: >
+      name=/etc/issue.net
+      state=absent
+    changed_when: false
+    with_items:
+      - stats.results
+    when: item.islnk is defined
+    tags:
+      - issue.net
+
+  - name: Set Warning Banner for Standard Login Services
+    template: src=etc/{{item}} dest=/etc/{{item}}
+    with_items:
+      - motd
+      - issue
+      - issue.net
+    tags:
+      - mots issue issue.net
+
+  - name: Set Warning Banner for Standard Login Services
+    file: >
+      path=/etc/{{ item }}
+      owner=root
+      group=root
+      mode=0644
+    with_items:
+      - motd
+      - issue
+      - issue.net
+    tags:
+      - motd issue issue.net
+
+  - name: Remove OS Information from Login Warning Banners
+    replace: >
+      dest=/etc/{{ item }}
+      regexp='\\r|\\v|\\s'
+      replace='[CIS replaced]'
+    with_items:
+      - motd
+      - issue
+      - issue.net
+    tags:
+      - Remove OS info from banners
