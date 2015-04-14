@@ -1,147 +1,76 @@
 ---
-- hosts: all
-  tasks:
 
-  - name: Remove telnet client
-    yum: name=telnet state=absent
-  tags:
-  - telnet
-
-  - name: Remove telnet server
-    yum: name=telnet-server state=absent
-  tags:
-  - telnet
-
-  - name: Remove rsh client
-    yum: name=rsh state=absent
-  tags:
-  - rsh
-
-  - name: Remove rsh server
-    yum: name=rsh-server state=absent
-  tags:
-  - rsh
-
-  - name: Remove NIS client
-    yum: name=ypbind state=absent
-  tags:
-  - nis
-
-  - name: Remove NIS server
-    yum: name=ypserv state=absent
-  tags:
-  - nis
-
-  - name: Remove tftp client
-    yum: name=tftp state=absent
-  tags:
-  - tftp
-
-  - name: Remove tftp server
-    yum: name=tftp-server state=absent
-  tags:
-  - tftp
-
-  - name: Remove talk client
-    yum: name=talk state=absent
-  tags:
-  - talk
-
-  - name: Remove talk server
-    yum: name=talk-server state=absent
-  tags:
-  - talk
+# Disable unwanted services
 
   - name: Disable chargen-dgram (check if exists)
     stat: path=/etc/xinetd.d/chargen-dgram
     register: chargen_dgram
-    tags:
-    - chargen dgram
+    tags: check chargen dgram
 
   - name: Disable chargen-dgram (disable xinetd service)
-    service:  name=chargen-dgram state=stopped enabled=no
+    service: name=chargen-dgram state=stopped enabled=no
     when: chargen_dgram.stat.exists
-    tags:
-    - chargen dgram
+    tags: disable chargen dgram
 
   - name: Disable chargen-stream (check if exists)
     stat: path=/etc/xinetd.d/chargen-stream
     register: chargen_stream
-    tags:
-    - chargen stream
+    tags: check chargen stream
 
   - name: Disable chargen-stream (disable xinetd service)
-    service:  name=chargen-stream state=stopped enabled=no
+    service: name=chargen-stream state=stopped enabled=no
     when: chargen_stream.stat.exists
-    tags:
-    - chargen stream
+    tags: disable chargen stream
 
   - name: Disable daytime-dgram (check if exists)
     stat: path=/etc/xinetd.d/daytime-dgram
     register: daytime_dgram
-    tags:
-    - daytime dgram
+    tags: check daytime dgram
 
   - name: Disable daytime-dgram (disable xinetd service)
-    service:  name=daytime-dgram tate=stopped enabled=no
+    service: name=daytime-dgram tate=stopped enabled=no
     when: daytime_dgram.stat.exists
-    tags:
-    - daytime dgram
+    tags: disable daytime dgram
 
   - name: Disable daytime-stream (check if exists)
     stat: path=/etc/xinetd.d/daytime-stream
     register: daytime_stream
-    tags:
-    - daytime stream
+    tags: check daytime stream
 
   - name: Disable daytime-stream (disable xinetd service)
-    service:  name=daytime-stream state=stopped enabled=no
+    service: name=daytime-stream state=stopped enabled=no
     when: daytime_stream.stat.exists
-    tags:
-    - xinetd
+    tags: disable xinetd daytime stream
 
   - name: Disable echo-dgram (check if exists)
     stat: path=/etc/xinetd.d/echo-dgram
     register: echo_dgram
-    tags:
-    - echo dgram
+    tags: check echo dgram
 
   - name: Disable echo-dgram (disable xinetd service)
-    service:  name=echo-dgram state=stopped enabled=no
+    service: name=echo-dgram state=stopped enabled=no
     when: echo_dgram.stat.exists
-    tags:
-    - xinted
+    tags: disable xinted echo stream
 
   - name: Disable echo-stream (check if exists)
     stat: path=/etc/xinetd.d/echo-stream
     register: echo_stream
-    tags:
-    - echo stream
+    tags: check echo stream
 
   - name: Disable echo-stream (disable xinetd service)
-    service:  name=echo-stream state=stopped enabled=no
+    service: name=echo-stream state=stopped enabled=no
     when: echo_stream.stat.exists
-    tags:
-    - echo stream
+    tags: disable echo stream
 
   - name: Disable tcpmux-server (check if exists)
     stat: path=/etc/xinetd.d/tcpmux-server
     register: tcpmux_server
-    tags:
-    - tcpmux server
+    tags: check tcpmux server
 
   - name: Disable tcpmux-server (disable xinetd service)
-    service:  name=tcpmux-server state=stopped enabled=no
+    service: name=tcpmux-server state=stopped enabled=no
     when: tcpmux_server.stat.exists
-    tags:
-    - tcmux server
-
-  - name: Remove xinetd (Scored)
-    yum: >
-      name=xinetd
-      state=absent
-    tags:
-    - xinted
+    tags: disable tcmux server
 
   - name: Remove X Windows (runlevel 3)
     lineinfile: >
@@ -149,64 +78,38 @@
       state=present
       regexp="^id:"
       line="id:3:initdefault:"
-    tags:
-      xwindows
-
-  - name: Remove X Windows (remove package group)
-    yum: name=xorg-x11-server-common state=absent
-    tags:
-    - xwindows
+    tags: remove xwindows init3
 
   - name: Disable Avahi Server (check if installed)
     stat: path=/etc/init.d/avahi-daemon
     register: avahi_service
-    tags:
-    - avahi
+    tags: avahi
 
   - name: Disable Avahi Server (disable service)
     service: name=avahi-daemon state=stopped enabled=no
     when: avahi_service.stat.exists
-    tags:
-    - avahi
+    tags: avahi
 
   - name: Check to see if cups daemon is installed
     stat: path=/etc/init.d/cups
     register: cups_service
-    tags:
-    - cups
+    tags: cups
 
   - name: Disable Print Server - CUPS
     service: name=cups state=stopped enabled=no
     ignore_errors: yes
     when: cups_service.stat.exists
-    tags:
-    - cups
-
-  - name: Remove DHCP Server
-    yum: name=dhcp state=absent
-    tags:
-    - dhcp server
-  - name: Remove LDAP
-    yum: name=openldap-clients state=absent
-    tags:
-    - ldap client
-
-  - name: Remove LDAP
-    yum: name=openldap-servers state=absent
-    tags:
-    - ldap server
+    tags: cups
 
   - name: NFS and RPC (check for nfs-utils)
     stat: path=/etc/init.d/nfslock
     register: nfs_utils
-    tags:
-    - nfs
+    tags: nfs
 
   - name: Disable NFS and RPC (check for rpcbind)
     stat: path=/etc/init.d/rpcbind
     register: rpcbind
-    tags:
-    - nfs
+    tags: nfs
 
   - name: Disable NFS and RPC (nfs-utils services)
     service: >
@@ -219,8 +122,7 @@
     - rpcidmapd
     - rpcsvcgssd
     when: nfs_utils.stat.exists
-    tags:
-    - nfs
+    tags: nfs
 
   - name: Disable NFS and RPC (rpcbind services)
     service: >
@@ -230,57 +132,7 @@
     when:
     - rpcbind.stat.exists
     - not nfs
-    tags:
-    - nfs
-
-  - name: Remove DNS Server
-    yum: >
-      name=bind
-      state=absent
-    tags:
-    - dns
-
-  - name: Remove FTP Server
-    yum: >
-      name=vsftpd
-      state=absent
-    tags:
-    - ftp
-
-  - name: Remove Dovecot (IMAP and POP3 services)
-    yum: >
-      name=dovecot
-      state=absent
-    tags:
-    - dovecott
-
-  - name: Remove Samba
-    yum: >
-      name=samba
-      state=absent
-    tags:
-    - samba
-
-  - name: Remove HTTP Proxy Server
-    yum: >
-      name=squid
-      state=absent
-    tags:
-    - squid
-
-  - name: Remove SNMP Server
-    yum: >
-      name=net-snmp
-      state=absent
-    tags:
-    - snmp
-
-  - name: Configure Mail Transfer Agent for Local-Only Mode
-    yum: >
-      name=postfix
-      state=present
-    tags:
-    - postfix
+    tags: nfs
 
   - name: Configure Mail Transfer Agent for Local-Only Mode
     lineinfile: >
@@ -291,16 +143,14 @@
       regexp="^inet_interfaces"
       line="inet_interfaces = localhost"
     ignore_errors: yes
-    tags:
-    - postfix
+    tags: postfix
 
   - name: Disable IP Forwarding
     sysctl: >
       name=net.ipv4.ip_forward
       value=0
       state=present
-    tags:
-    - ipv4 forward
+    tags: ipv4 forward
 
   - name: Disable Send Packet Redirects
     sysctl: >
@@ -308,8 +158,7 @@
       value=0
       state=present
       ignoreerrors=true
-    tags:
-    - send packet redirects
+    tags: send packet redirects
 
   - name: Disable Send Packet Redirects
     sysctl: >
@@ -317,8 +166,7 @@
       value=0
       state=present
       ignoreerrors=true
-    tags:
-    - send packet redirects
+    tags: send packet redirects
 
   - name: Disable Source Routed Packet Acceptance
     sysctl: >
@@ -326,8 +174,7 @@
       value=0
       state=present
       ignoreerrors=true
-    tags:
-    - source routed packets
+    tags: source routed packets
 
   - name: Disable Source Routed Packet Acceptance
     sysctl: >
@@ -335,8 +182,7 @@
       value=0
       state=present
       ignoreerrors=true
-    tags:
-    - source routed packets
+    tags: source routed packets
 
   - name: Disable ICMP Redirect Acceptance
     sysctl: >
@@ -344,8 +190,7 @@
       value=0
       state=present
       ignoreerrors=true
-    tags:
-    - icmp redirect acceptance
+    tags: icmp redirect acceptance
 
   - name: Disable ICMP Redirect Acceptance
     sysctl: >
@@ -353,8 +198,7 @@
       value=0
       state=present
       ignoreerrors=true
-    tags:
-    - icmp redirect acceptance
+    tags: icmp redirect acceptance
 
   - name: Log Suspicious Packets
     sysctl: >
@@ -362,8 +206,7 @@
       value=1
       state=present
       ignoreerrors=true
-    tags:
-    - log suspicious packets
+    tags: log suspicious packets
 
   - name: Log Suspicious Packets
     sysctl: >
@@ -371,8 +214,7 @@
       value=1
       state=present
       ignoreerrors=true
-    tags:
-    - log suspicious packets
+    tags: log suspicious packets
 
   - name: Enable Ignore Broadcast Requests
     sysctl: >
@@ -380,8 +222,7 @@
       value=1
       state=present
       ignoreerrors=true
-    tags:
-    - ignore broadcast requests
+    tags: ignore broadcast requests
 
   - name: Enable Bad Error Message Protection
     sysctl: >
@@ -389,8 +230,7 @@
       value=1
       state=present
       ignoreerrors=true
-    tags:
-    - bad error message protection
+    tags: bad error message protection
 
   - name: Enable TCP SYN Cookies
     sysctl: >
@@ -398,8 +238,7 @@
       value=1
       state=present
       ignoreerrors=true
-    tags:
-    - tcp syn cookies
+    tags: tcp syn cookies
 
   - name: Disable IPv6 Router Advertisements
     sysctl: >
@@ -407,8 +246,7 @@
       value=0
       state=present
       ignoreerrors=true
-    tags:
-    - ipv6 router advertisements
+    tags: ipv6 router advertisements
 
   - name: Disable IPv6 Router Advertisements
     sysctl: >
@@ -416,8 +254,7 @@
       value=0
       state=present
       ignoreerrors=true
-    tags:
-    - ipv6 router adevertisements
+    tags: ipv6 router adevertisements
 
   - name: Disable IPv6 Redirect Acceptance
     sysctl: >
@@ -425,8 +262,7 @@
       value=0
       state=present
       ignoreerrors=true
-    tags:
-    - ipv6 redirect acceptance
+    tags: ipv6 redirect acceptance
 
   - name: Disable IPv6 Redirect Acceptance
     sysctl: >
@@ -434,8 +270,7 @@
       value=0
       state=present
       ignoreerrors=true
-    tags:
-    - ipv6 redirect acceptance
+    tags: ipv6 redirect acceptance
 
   - name: Disable IPv6 (disable in network config)
     lineinfile: >
@@ -444,8 +279,7 @@
       regexp=^NETWORKING_IPV6
       line=NETWORKING_IPV6=no
     when: disable_ipv6
-    tags:
-    - disable ipv6
+    tags: disable ipv6
 
   - name: Disable IPv6 (disable in network config)
     lineinfile: >
@@ -454,8 +288,7 @@
       regexp=^IPV6INIT
       line=IPV6INIT=no
     when: disable_ipv6
-    tags:
-    - disable ipv6
+    tags: disable ipv6
 
   - name: Disable IPv6 (disable via modprobe)
     lineinfile: >
@@ -464,8 +297,7 @@
       dest=/etc/modprobe.d/ipv6.conf
       line="options ipv6 disable=1"
     when: disable_ipv6
-    tags:
-    - disable ipv6 modprobe
+    tags: disable ipv6 modprobe
 
   - name: Disable IPv6 (disable ip6tables)
     service: >
@@ -473,15 +305,13 @@
       enabled=no
       state=stopped
     when: disable_ipv6
-    tags:
-    - disable ipv6 iptables
+    tags: disable ipv6 iptables
 
   - name: Disable IPv6 (flush routes)
     command: /sbin/sysctl -w net.ipv6.route.flush=1
     ignore_errors: yes
     when: disable_ipv6
-    tags:
-    - disable ipv6 flush routes
+    tags: disable ipv6 flush routes
 
   - name: Disable Secure ICMP Redirect Acceptance
     sysctl: >
@@ -489,8 +319,7 @@
       value=0
       state=present
       ignoreerrors=true
-    tags:
-    - icmp redirect acceptance
+    tags: icmp redirect acceptance
 
   - name: Disable Secure ICMP Redirect Acceptance
     sysctl: >
@@ -498,8 +327,7 @@
       value=0
       state=present
       ignoreerrors=true
-    tags:
-    - icmp redirect acceptance
+    tags: icmp redirect acceptance
 
   - name: Enable RFC-recommended Source Route Validation
     sysctl: >
@@ -722,9 +550,8 @@
     tags:
     - Remove OS info from banners
 
-  - name: Install EPEL6_x64 repo
-    action: command rpm -Uvh http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
+#  - name: Install EPEL6_x64 repo
+#    action: command rpm -Uvh http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
 
   - name: Install IUS6_x64 repo
     action: command rpm -Uvh http://dl.iuscommunity.org/pub/ius/stable/Redhat/6/x86_64/ius-release-1.0-13.ius.el6.noarch.rpm
-

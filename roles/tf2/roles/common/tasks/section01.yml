@@ -1,0 +1,93 @@
+---
+
+# Remove unwanted packages
+
+  - name: Remove telnet client
+    yum: name=telnet state=absent
+  tags: telnet
+
+  - name: Remove telnet server
+    yum: name=telnet-server state=absent
+  tags: telnet
+
+  - name: Remove rsh client
+    yum: name=rsh state=absent
+  tags: rsh
+
+  - name: Remove rsh server
+    yum: name=rsh-server state=absent
+  tags: rsh
+
+  - name: Remove NIS client
+    yum: name=ypbind state=absent
+  tags: nis
+
+  - name: Remove NIS server
+    yum: name=ypserv state=absent
+  tags: nis
+
+  - name: Remove tftp client
+    yum: name=tftp state=absent
+  tags: tftp
+
+  - name: Remove tftp server
+    yum: name=tftp-server state=absent
+  tags: tftp
+
+  - name: Remove talk client
+    yum: name=talk state=absent
+  tags: talk
+
+  - name: Remove talk server
+    yum: name=talk-server state=absent
+  tags: talk
+
+  - name: Remove xinetd (Scored)
+    yum: name=xinetd state=absent
+    tags: remove xinted
+
+  - name: Remove X Windows (remove package group)
+    yum: name=xorg-x11-server-common state=absent
+  tags: remove xwindows
+
+  - name: Remove DHCP Server
+    yum: name=dhcp state=absent
+    tags: dhcp server
+
+  - name: Remove LDAP
+    yum: name=openldap-clients state=absent
+    tags: ldap client
+
+  - name: Remove LDAP
+    yum: name=openldap-servers state=absent
+    tags: ldap server
+
+  - name: Remove DNS Server
+    yum: name=bind state=absent
+    tags: dns
+
+  - name: Remove FTP Server
+    yum: name=vsftpd state=absent
+    tags: ftp
+
+  - name: Remove Dovecot (IMAP and POP3 services)
+    yum: name=dovecot state=absent
+    tags: dovecott
+
+  - name: Remove Samba
+    yum: name=samba state=absent
+    tags: samba
+
+  - name: Remove HTTP Proxy Server
+    yum: name=squid state=absent
+    tags: squid
+
+  - name: Remove SNMP Server
+    yum: name=net-snmp state=absent
+    tags: snmp
+
+  - name: Configure Mail Transfer Agent for Local-Only Mode
+    yum: name=postfix state=present
+    tags: postfix
+
+
