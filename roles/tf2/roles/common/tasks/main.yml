@@ -1,9 +1,6 @@
 ---
-  - include: section01.yml
-    tags: section01
+  - include: section_01.yml
+    tags: section1
 
-  - include: section02.yml
-    tags: section02
-
-  - inlcude: section03.yml
-    tags: section03
+  - include: section_02.yml
+    tags: section2
