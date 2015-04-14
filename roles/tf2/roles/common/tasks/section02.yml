@@ -513,8 +513,7 @@
     with_items:
       - stats.results
     when: item.islnk is defined
-    tags:
-    - issue.net
+    tags: issue.net
 
   - name: Set Warning Banner for Standard Login Services
     template: src={{item}} dest=/etc/{{item}}
@@ -522,8 +521,7 @@
       - motd
       - issue
       - issue.net
-    tags:
-    - motd issue issue.net
+    tags: motd issue issue.net
 
   - name: Set Warning Banner for Standard Login Services
     file: >
@@ -535,8 +533,7 @@
       - motd
       - issue
       - issue.net
-    tags:
-    - motd issue issue.net
+    tags: motd issue issue.net
 
   - name: Remove OS Information from Login Warning Banners
     replace: >
@@ -547,8 +544,7 @@
       - motd
       - issue
       - issue.net
-    tags:
-    - Remove OS info from banners
+    tags: Remove OS info from banners
 
 #  - name: Install EPEL6_x64 repo
 #    action: command rpm -Uvh http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm

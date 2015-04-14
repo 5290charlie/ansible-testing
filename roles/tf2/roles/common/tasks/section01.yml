@@ -4,43 +4,43 @@
 
   - name: Remove telnet client
     yum: name=telnet state=absent
-  tags: telnet
+    tags: telnet
 
   - name: Remove telnet server
     yum: name=telnet-server state=absent
-  tags: telnet
+    tags: telnet
 
   - name: Remove rsh client
     yum: name=rsh state=absent
-  tags: rsh
+    tags: rsh
 
   - name: Remove rsh server
     yum: name=rsh-server state=absent
-  tags: rsh
+    tags: rsh
 
   - name: Remove NIS client
     yum: name=ypbind state=absent
-  tags: nis
+    tags: nis
 
   - name: Remove NIS server
     yum: name=ypserv state=absent
-  tags: nis
+    tags: nis
 
   - name: Remove tftp client
     yum: name=tftp state=absent
-  tags: tftp
+    tags: tftp
 
   - name: Remove tftp server
     yum: name=tftp-server state=absent
-  tags: tftp
+    tags: tftp
 
   - name: Remove talk client
     yum: name=talk state=absent
-  tags: talk
+    tags: talk
 
   - name: Remove talk server
     yum: name=talk-server state=absent
-  tags: talk
+    tags: talk
 
   - name: Remove xinetd (Scored)
     yum: name=xinetd state=absent
@@ -48,7 +48,7 @@
 
   - name: Remove X Windows (remove package group)
     yum: name=xorg-x11-server-common state=absent
-  tags: remove xwindows
+    tags: remove xwindows
 
   - name: Remove DHCP Server
     yum: name=dhcp state=absent
