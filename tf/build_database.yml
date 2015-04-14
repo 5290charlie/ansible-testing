@@ -1,0 +1,16 @@
+---
+- hosts: dbserver
+  tasks:
+
+  - name: Install IUS6_x64 repo
+    action: command rpm -Uvh http://dev.mysql.com/get/mysql-community-release-el6-5.noarch.rpm
+
+  - name: Install MySQL56 Server
+    yum: name=mysql56-server
+
+    - name: Copy over my.cnf
+    template: src=my.cnf dest=/etc/my.cnf
+
+  - name: Start and enable mysqld
+    service: name=mysqld state=started enabled=yes
+    tags: service

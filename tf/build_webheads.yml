@@ -1,0 +1,19 @@
+---
+- hosts: webservers
+  - name: Install HTTPD packages
+    yum: name={{ item }} state=present
+    with_items: packages
+    tags: package
+
+  - name: Copy main index.html
+    template: src=index.html.j2 dest=/var/www/html/index.html
+
+  - name: Copy over httpd.conf
+    template: src=httpd.conf dest=/etc/httpd/conf/httpd.conf
+
+  - name: Copy over php.ini
+    template: src=php.ini dest=/etc/php.ini
+
+  - name: Start and enable htpd
+    service: name=httpd state=started enabled=yes
+    tags: service
