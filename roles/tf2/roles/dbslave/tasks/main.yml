@@ -12,7 +12,7 @@
     command: mkdir /var/log/mysql
 
   - name: copy my.cnf to /etc/my.cnf
-    copy: src=master.my.cnf.j2 dest=/etc/my.cnf
+    copy: src=slave.my.cnf.j2 dest=/etc/my.cnf
 
   - name: start and enable mysqld service
     service: name=mysqld state=started enabled=yes

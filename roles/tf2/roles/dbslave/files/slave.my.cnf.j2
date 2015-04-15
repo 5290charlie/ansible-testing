@@ -1,0 +1,91 @@
+[mysqld]
+datadir=/var/lib/mysql
+socket=/var/lib/mysql/mysql.sock
+symbolic-links=0
+sql_mode=NO_ENGINE_SUBSTITUTION,STRICT_TRANS_TABLES
+
+# Networking #
+#============#
+bind-address = 0.0.0.0
+
+# Replication #
+#=============#
+server-id                       = 200
+#replicate-ignore-db=mysql
+#slave-skip-errors = 1062 # Should not skip
+log-slave-updates
+relay-log = relay-bin
+relay-log-index = relay-bin
+
+
+# CACHES AND LIMITS #
+#===================#
+tmp_table_size                 = 2048M
+max_heap_table_size            = 2048M
+query_cache_type               = 0
+query_cache_size               = 64M
+query_cache_limit              = 1M
+#max_connections               = 4000
+max_connections                = 3000
+thread_cache_size              = 200
+max_connect_errors             = 10000
+concurrent_insert              = 2
+connect_timeout                = 30
+max_allowed_packet             = 32M
+open_files_limit               = 8192
+table_definition_cache         = 2048
+table_open_cache               = 4096
+table_open_cache_instances     = 8
+
+# Close connection after idle 10 minutes
+wait_timeout                   = 600
+join_buffer_size               = 16M
+sort_buffer_size               = 2M
+#read_rnd_buffer_size          = 2M
+read_rnd_buffer_size           = 8M
+
+# MyISAM            #
+#===================#
+key_buffer_size                = 64M
+bulk_insert_buffer_size        = 1024M
+myisam_sort_buffer_size        = 16M
+
+# INNODB            #
+#===================#
+innodb_buffer_pool_size       = 32768M
+innodb_log_file_size           = 512M
+innodb_log_buffer_size         = 32M
+innodb_buffer_pool_instances   = 8
+innodb_flush_method            = O_DIRECT
+innodb_log_files_in_group      = 2
+innodb_flush_log_at_trx_commit = 2
+innodb_file_per_table          = 1
+metadata_locks_hash_instances  = 16
+
+# Remove leading # to turn on a very important data integrity option: logging
+# changes to the binary log between backups.
+log-bin = mysql-bin
+log-bin-index = mysql-bin
+expire_logs_days = 10
+
+# LOGGING           #
+#===================#
+general_log                    = 0
+general_log_file               = /var/log/mysql/mysql-general.log
+log_error                      = 1
+log_error                      = /var/log/mysql/mysql-error.log
+log_queries_not_using_indexes  = 1
+log_throttle_queries_not_using_indexes = 60
+slow_query_log                 = 1
+long_query_time                = 10
+slow_query_log_file            = /var/log/mysql/mysql-slow.log
+
+# Going to leave to see how agencies are coding right now
+#sql_mode=NO_ENGINE_SUBSTITUTION,STRICT_TRANS_TABLES
+
+# Will be depricated next release:
+# http://dev.mysql.com/doc/refman/5.6/en/server-system-variables.html#sysvar_explicit_defaults_for_timestamp
+explicit_defaults_for_timestamp=1
+
+[mysqld_safe]
+pid-file=/var/run/mysqld/mysqld.pid
