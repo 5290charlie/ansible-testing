@@ -149,7 +149,6 @@
       enabled=no
     when:
     - rpcbind.stat.exists
-    - not nfs
     tags: nfs
 
   - name: Configure Mail Transfer Agent for Local-Only Mode

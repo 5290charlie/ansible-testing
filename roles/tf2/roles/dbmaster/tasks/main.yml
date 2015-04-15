@@ -1,0 +1,4 @@
+---
+# rpm -Uvh http://dev.mysql.com/get/mysql-community-release-el6-5.noarch.rpm
+# yum --enablerepo=rhui-REGION-rhel-server-releases-optional --nogpgcheck install ansible
+# yum install mysql-community-release mysql-community-server
