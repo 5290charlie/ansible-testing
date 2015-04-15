@@ -11,7 +11,7 @@ packages:
 # Bug with Error: Package: php54-imap-5.4.39-1.ius.el6.x86_64 (ius)
 #           Requires: libc-client.so.2007()(64bit)
 # (Fixing externally first)
-  - php54-imap
+#  - php54-imap
   - php54-ldap
   - php54-mbstring
   - php54-mcrypt
