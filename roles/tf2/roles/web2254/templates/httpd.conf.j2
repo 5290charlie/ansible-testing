@@ -104,6 +104,7 @@ ServerAdmin root@localhost
 #ServerName www01.your.domain.com
 UseCanonicalName Off
 DocumentRoot "/var/www/html"
+
 <Directory />
     Options FollowSymLinks
     AllowOverride None
@@ -114,7 +115,6 @@ DocumentRoot "/var/www/html"
     AllowOverride None
     Order allow,deny
     Allow from all
-
 </Directory>
 
 <IfModule mod_userdir.c>

@@ -1,5 +1,15 @@
 ---
 
+# Add Extra packages
+
+  - name: install libselinux
+    yum: name=libselinux-python state=present
+    tags: libselinux-python
+
+  - name: make sure tzdata is installed for rhel systems
+    yum: name=tzdata state=present
+    tags: [timezone]
+
 # Remove unwanted packages
 
   - name: Remove telnet client

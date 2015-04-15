@@ -1,0 +1,4 @@
+---
+hosts: dbmasters
+  roles:
+  - dbmaster

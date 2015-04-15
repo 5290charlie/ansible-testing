@@ -1,3 +1,24 @@
 ---
+
+packages:
+  - httpd
+  - httpd-devel
+  - php54
+  - php54-cli
+  - php54-common
+  - php54-dba
+  - php54-devel
+  - php54-imap
+  - php54-ldap
+  - php54-mbstring
+  - php54-mcrypt
+  - php54-mysql
+  - php54-pdo
+  - php54-pear
+  - php54-process
+  - php54-soap
+  - php54-tidy
+  - php54-xml
+
 apache_service: httpd
 apache_docroot: /var/www/html
