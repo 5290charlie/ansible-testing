@@ -1,4 +1,18 @@
 ---
-# rpm -Uvh http://dev.mysql.com/get/mysql-community-release-el6-5.noarch.rpm
-# yum --enablerepo=rhui-REGION-rhel-server-releases-optional --nogpgcheck install ansible
-# yum install mysql-community-release mysql-community-server
+  - name: Setup MySQL56_x64 repo
+    yum: name=http://dev.mysql.com/get/mysql-community-release-el6-5.noarch.rpm state=present
+
+  - name: install mysql56 x64 client
+    yum: name=mysql-community-client state=present
+
+  - name: install mysql56 x64 server
+    yum: name=mysql-community-server state=present
+
+  - name: create /var/log/mysql
+    command: mkdir /var/log/mysql
+
+  - name: copy my.cnf to /etc/my.cnf
+    copy: src=my.cnf.j2 dest=/etc/my.cnf
+
+  - name: start and enable mysqld service
+    service: name=mysqld state=started enabled=yes
