@@ -6,10 +6,10 @@
     tags: package
 
   - name: Copy httpd.conf
-    template: src=httpd.conf.j2.j2 dest=/etc/httpd/conf/httpd.conf.j2
+    template: src=httpd.conf.j2 dest=/etc/httpd/conf/httpd.conf.j2
 
   - name: Copy php.ini
-    template: src=php.ini.j2.j2 dest=/etc/php.ini.j2
+    template: src=php.ini.j2 dest=/etc/php.ini.j2
 
   - name: Copy index.html
     template: src=index.html.j2 dest={{ apache_docroot }}/index.html
