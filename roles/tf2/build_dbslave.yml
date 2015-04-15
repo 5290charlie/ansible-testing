@@ -1,4 +1,4 @@
 ---
-hosts: dbslaves
+hosts: localhost
   roles:
   - dbslave
