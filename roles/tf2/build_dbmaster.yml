@@ -1,4 +1,4 @@
 ---
-hosts: dbmasters
+- hosts: localhost
   roles:
   - dbmaster
